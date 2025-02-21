@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sfProText.variable} ${inter.className}`}>
+      <body className={`${sfProText.variable} ${inter.variable}`}>
         {children}
       </body>
     </html>

@@ -5,14 +5,30 @@
 :root {
   --primary-100: 245 243 255;
   --primary-500: 79 53 243;
-  --gray-100: 154 166 172;
+  --gray-50: 221 226 228;
+  --gray-100: 221 221 221;
   --gray-200: 111 111 111;
   --gray-300: 101 103 109;
   --gray-500: 37 44 50;
   --gray-700: 26 25 25;
+  --green-50: 235 250 226;
+  --green-400: 79 156 32;
+  --red-50: 253 242 242;
+  --red-400: 236 89 98;
+  --blue-50: 238 243 255;
+  --blue-400: 48 105 254;
+  --off-white: 245 247 249;
 
   --background: #ffffff;
   --foreground: #171717;
+
+  --type-scale: 0.8;
+  --xs: calc(0.75rem * var(--type-scale));
+  --sm: calc(0.875rem * var(--type-scale));
+  --base: calc(1rem * var(--type-scale));
+  --md: calc(1.25rem * var(--type-scale));
+  --lg: calc(1.5rem * var(--type-scale));
+  --xl: calc(1.875rem * var(--type-scale));
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,5 +41,24 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: theme("fontFamily.inter");
+}
+
+@media only screen and (min-width: 650px) {
+  :root {
+    --type-scale: 0.9;
+  }
+}
+
+@media only screen and (min-width: 650px) {
+  :root {
+    --type-scale: 1;
+  }
+}
+
+@layer base {
+  .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
