@@ -2,45 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary-100: 245 243 255;
-  --primary-500: 79 53 243;
-  --gray-50: 221 226 228;
-  --gray-100: 221 221 221;
-  --gray-200: 111 111 111;
-  --gray-300: 101 103 109;
-  --gray-500: 37 44 50;
-  --gray-700: 26 25 25;
-  --green-50: 235 250 226;
-  --green-400: 79 156 32;
-  --red-50: 253 242 242;
-  --red-400: 236 89 98;
-  --blue-50: 238 243 255;
-  --blue-400: 48 105 254;
-  --off-white: 245 247 249;
-
-  --background: #ffffff;
-  --foreground: #171717;
-
-  --type-scale: 0.8;
-  --xs: calc(0.75rem * var(--type-scale));
-  --sm: calc(0.875rem * var(--type-scale));
-  --base: calc(1rem * var(--type-scale));
-  --md: calc(1.25rem * var(--type-scale));
-  --lg: calc(1.5rem * var(--type-scale));
-  --xl: calc(1.875rem * var(--type-scale));
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
+  .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+
+    --primary-100: 245 243 255;
+    --primary-500: 79 53 243;
+    --gray-50: 221 226 228;
+    --gray-100: 221 221 221;
+    --gray-200: 111 111 111;
+    --gray-300: 132 133 133;
+    --gray-400: 101 103 109;
+    --gray-500: 37 44 50;
+    --gray-700: 26 25 25;
+    --green-50: 235 250 226;
+    --green-400: 79 156 32;
+    --red-50: 253 242 242;
+    --red-400: 236 89 98;
+    --blue-50: 238 243 255;
+    --blue-400: 48 105 254;
+    --off-white: 245 247 249;
+
+    --type-scale: 0.8;
+    --xs: calc(0.75rem * var(--type-scale));
+    --sm: calc(0.875rem * var(--type-scale));
+    --base: calc(1rem * var(--type-scale));
+    --md: calc(1.25rem * var(--type-scale));
+    --lg: calc(1.5rem * var(--type-scale));
+    --xl: calc(1.875rem * var(--type-scale));
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
   font-family: theme("fontFamily.inter");
 }
 
@@ -57,8 +104,24 @@ body {
 }
 
 @layer base {
-  .container {
-    padding-left: 20px;
-    padding-right: 20px;
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .react-datepicker__input-container 
+  img.react-datepicker__calendar-icon.tt-date-picker-icon {
+    right: 0.875rem;
+    top: 50%;
+    padding: 0;
+    transform: translateY(-50%);
+  }
+
+  .react-datepicker__view-calendar-icon input.tt-date-picker {
+    padding: 0.75rem 1.875rem 0.75rem 1rem;
   }
 }

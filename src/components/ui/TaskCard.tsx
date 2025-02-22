@@ -1,30 +1,20 @@
 'use client'
 
 import Image from 'next/image'
-
-import { Task } from '@/domain/entities/global'
 import { getFormatedDate, getTimeFormat } from '@/utils/format'
+import { taskPriority } from '@/utils/constants'
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './dropdown-menu'
 import Flag from '../icons/Flag'
 import dotIcon from '../../../public/icons/dots.svg'
 
 interface TaskProps extends Task {
-  onClick: VoidFunction
-}
-
-const taskPriority = {
-  low: {
-    color: 'text-red-400',
-    background: 'bg-red-50',
-  },
-  medium: {
-    color: 'text-blue-400',
-    background: 'bg-blue-50',
-  },
-  high: {
-    color: 'text-green-400',
-    background: 'bg-green-50',
-  },
+  onEdit: VoidFunction
 }
 
 const TaskCard = ({
@@ -33,12 +23,17 @@ const TaskCard = ({
   image,
   priority,
   timestamp,
+  onEdit,
 }: TaskProps) => {
   return (
     <article className="p-4">
       <p className="font-inter text-xs font-medium leading-[150%] xl:leading-6">
         <span
-          className={`rounded px-2 uppercase ${taskPriority[priority].color} ${taskPriority[priority].background}`}
+          className="rounded p-2 uppercase"
+          style={{
+            backgroundColor: taskPriority[priority].background,
+            color: taskPriority[priority].color,
+          }}
         >
           {priority}
         </span>
@@ -48,9 +43,23 @@ const TaskCard = ({
           <h4 className="flex-1 font-sf-pro-text text-base font-medium leading-[150%] text-gray-700">
             {title}
           </h4>
-          <button onClick={() => {}}>
-            <Image src={dotIcon} alt="Dot icon" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="rounded-md border border-gray-100 px-2 shadow-md">
+              <Image src={dotIcon} alt="Three dots icon" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={onEdit}>
+                <span className="font-inter text-xs font-normal text-gray-700">
+                  Edit
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <span className="font-inter text-xs font-normal text-red-400">
+                  Delete
+                </span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </section>
         {image && (
           <Image
@@ -68,10 +77,10 @@ const TaskCard = ({
       <section className="flex items-center gap-x-2">
         <Flag />
         <section className="flex flex-1 items-center justify-between">
-          <p className="font-inter text-xs font-medium text-gray-300">
+          <p className="font-inter text-xs font-medium text-gray-400">
             {getFormatedDate(timestamp)}
           </p>
-          <p className="font-inter text-xs font-medium text-gray-300">
+          <p className="font-inter text-xs font-medium text-gray-400">
             {getTimeFormat(timestamp)}
           </p>
         </section>

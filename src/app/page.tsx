@@ -1,10 +1,10 @@
 import Content from '@/components/ui/TaskContainer'
 import { Header } from '@/components/ui/Header'
 import { Sidebar } from '@/components/ui/Sidebar'
-import { Task } from '@/domain/entities/global'
 
 const todoList: Task[] = [
   {
+    id: '1',
     title: 'Start washing',
     priority: 'low',
     status: 'pending',

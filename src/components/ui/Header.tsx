@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { ChangeEventHandler, useState } from 'react'
 
-import { HeaderProps } from '@/domain/entities/types-ui'
+import { HeaderProps } from '@/domain/types/types-ui'
 
 import searchIcon from '../../../public/icons/Search.svg'
 

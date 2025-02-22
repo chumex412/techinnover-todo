@@ -7,7 +7,9 @@ export const getFormatedDate = (
   if (typeof date === 'string' || typeof date === 'number')
     date = new Date(date)
 
-  if (typeof date === 'undefined') date = new Date()
+  if (typeof date === 'undefined') {
+    return ''
+  }
 
   return new Intl.DateTimeFormat(
     countCode,
@@ -23,7 +25,9 @@ export const getTimeFormat = (
   if (typeof date === 'string' || typeof date === 'number')
     date = new Date(date)
 
-  if (typeof date === 'undefined') date = new Date()
+  if (typeof date === 'undefined') {
+    return ''
+  }
 
   return date.toLocaleTimeString(countCode, {
     hour: 'numeric',

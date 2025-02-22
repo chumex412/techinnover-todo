@@ -48,7 +48,7 @@ export const Sidebar = () => {
         {navLinks.map((link) => (
           <Link
             href={link.path}
-            className="flex items-center gap-x-5 p-5 font-sf-pro-text text-md font-semibold text-gray-300"
+            className="flex items-center gap-x-5 p-5 font-sf-pro-text text-md font-semibold text-gray-400"
             key={link.name}
           >
             {link.icon} <span className="flex-1">{link.name}</span>
