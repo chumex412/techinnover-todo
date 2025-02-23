@@ -17,7 +17,7 @@ const TaskContent = ({
 }: TaskContentProps<Task>) => {
   return (
     <>
-      <section className="bg-off-white flex flex-1 flex-col gap-y-4 rounded-lg p-2">
+      <section className="bg-off-white flex flex-1 flex-col gap-y-4 rounded-lg px-2 py-4">
         <section className="flex items-center justify-between">
           <div className="flex items-center gap-x-2">
             <h3 className="font-inter text-base font-medium text-gray-200">

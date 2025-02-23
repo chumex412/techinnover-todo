@@ -5,20 +5,22 @@ import { useState } from 'react'
 import Modal from './Dialog'
 import TaskForm from './TaskForm'
 import TaskContent from './TaskSubContent'
+import useTask from '@/hooks/useTasks'
 
-const Content = (props: Record<TaskStatus, Task[]>) => {
+const Content = () => {
   // const [action, setAction] = useState<'add' | 'edit'>()
   const [selectedTask, setSelectedTask] = useState<Task>()
+  const { tasks } = useTask()
 
   // const addTask = () => {
   //   setAction('add')
   // }
 
   const editTask = (id: string, status: TaskStatus) => {
-    const tasks = props[status]
+    const statusTasks = tasks[status]
 
     if (tasks) {
-      const taskItem = tasks.find((item) => item.id === id)
+      const taskItem = statusTasks.find((item) => item.id === id)
 
       if (taskItem) {
         setSelectedTask(taskItem)
@@ -31,19 +33,19 @@ const Content = (props: Record<TaskStatus, Task[]>) => {
       <section className="flex items-start gap-4 bg-white">
         <TaskContent
           title="To do"
-          list={props.pending}
+          list={tasks.pending}
           status="pending"
           onEdit={editTask}
         />
         <TaskContent
           title="In progress"
-          list={props.progress}
+          list={tasks.progress}
           status="progress"
           onEdit={editTask}
         />
         <TaskContent
           title="Completed"
-          list={props.completed}
+          list={tasks.completed}
           status="completed"
           onEdit={editTask}
         />

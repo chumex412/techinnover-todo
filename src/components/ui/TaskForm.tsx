@@ -21,6 +21,7 @@ import {
 } from './select'
 import Input from './Input'
 import DateTime from './DateTime'
+import { useAddTaskMutation, useUpdateTaskMutation } from '@/redux/slice/task'
 
 const priorities: PriorityOptions[] = [
   { label: 'High', value: 'high' },
@@ -88,7 +89,9 @@ const TaskForm = ({
   // onSubmitData,
 }: TaskFormProps) => {
   const [image, setImage] = useState('')
-  const [priority, setPriority] = useState<TaskPriority>('low')
+  const [priority, setPriority] = useState<TaskPriority>(
+    defaultData?.priority || 'low'
+  )
   const [date, setDate] = useState<Date | undefined>(
     defaultData?.timestamp ? new Date(defaultData.timestamp) : undefined
   )
@@ -107,6 +110,9 @@ const TaskForm = ({
     },
   })
 
+  const [addTask] = useAddTaskMutation()
+  const [updateTask] = useUpdateTaskMutation()
+
   const handlePrioritySelect = (value: TaskPriority) => {
     setPriority(value)
   }
@@ -124,10 +130,15 @@ const TaskForm = ({
       title: data.taskName,
       description: data.taskDesc,
       image,
-      priority: priority || 'low',
+      priority: priority,
       status: defaultData?.status || status || 'pending',
     }
-    // onSubmitData && onSubmitData()
+
+    if (endpoint.includes('edit') && defaultData?.id) {
+      updateTask({ task: taskData, id: defaultData?.id })
+    } else {
+      addTask(taskData)
+    }
   }
 
   return (

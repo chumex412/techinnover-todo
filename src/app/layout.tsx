@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
+import AppLayout from '@/components/layout/AppLayout'
 import '@/styles/globals.css'
+
 import { sfProText } from '../../public/fonts/SF-Pro-Text-Font-Family'
 
 const inter = Inter({
@@ -22,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${sfProText.variable} ${inter.variable}`}>
-        {children}
+        <AppLayout>{children}</AppLayout>
       </body>
     </html>
   )
