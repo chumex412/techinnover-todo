@@ -11,7 +11,7 @@ export default {
   theme: {
     extend: {
       screens: {
-        xs: '540',
+        xs: '540px',
       },
       colors: {
         background: 'hsl(var(--background))',
