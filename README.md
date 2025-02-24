@@ -5,11 +5,11 @@ Basicially an assessment to test my frontend skills, experience and knowledge.
 ## Table of contents
 
 - [Overview](#overview)
-  -[Getting started](#getting-started)
-  - [Links](#links)
+  * [Getting started](#getting-started)
+  * [Links](#links)
 - [My process](#my-process)
-  - [Built with](#built-with)
-  -[Project Env Variables](#project-variables)
+  * [Built with](#built-with)
+  * [Project Env Variables](#project-variables)
 
 ## Overview
 
