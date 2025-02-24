@@ -81,8 +81,9 @@ export default function useFileUpload() {
   const deleteUploadedImg = async (id: string) => {
     let error = ''
     try {
-      const response = await axios.delete<NetworkResponse<null>>(
-        `/api/cloudinary/${id}`
+      const response = await axios.post<NetworkResponse<null>>(
+        `/api/cloudinary`,
+        { id }
       )
 
       if (response.data.success) {
