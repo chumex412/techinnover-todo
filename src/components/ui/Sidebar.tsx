@@ -80,9 +80,10 @@ export const Sidebar = () => {
             <Link
               href={link.path}
               className={clsx(
-                'flex items-center gap-x-5 p-5 font-sf-pro-text text-md font-semibold text-gray-400',
-                link.path === currentPath &&
-                  'border-r-[6px] border-primary-500 text-primary-500'
+                'flex items-center gap-x-5 p-5 font-sf-pro-text text-md font-semibold text-gray-400 transition-colors duration-200',
+                link.path === currentPath
+                  ? 'border-r-[6px] border-primary-500 text-primary-500 hover:bg-primary-100'
+                  : 'hover:bg-gray-50'
               )}
               key={link.name}
             >

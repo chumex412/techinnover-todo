@@ -50,13 +50,13 @@ export const Header = () => {
         </p>
         <div className="flex items-center gap-x-4">
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 transition-shadow duration-300 hover:shadow-md"
             onClick={handlePrevDay}
           >
             <Image src={arrowLeft} alt="Arrow left icon" />
           </button>
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 transition-shadow duration-300 hover:shadow-md"
             onClick={handleNextDay}
           >
             <Image src={arrowRight} alt="Arrow right icon" />

@@ -53,7 +53,7 @@ const TaskCard = memo(function Card({
               {title}
             </h4>
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex w-6 items-center justify-center rounded-md border border-gray-100 shadow-md">
+              <DropdownMenuTrigger className="flex w-6 items-center justify-center rounded-md border border-gray-100 shadow-md transition-shadow duration-300 hover:shadow-sm">
                 <Image
                   src={dotIcon}
                   className="h-4 w-4"

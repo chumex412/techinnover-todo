@@ -123,7 +123,11 @@ export default function Modal({
 }: ModalProps<React.ReactNode>) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpen}>
-      {trigger && <DialogTrigger>{trigger}</DialogTrigger>}
+      {trigger && (
+        <DialogTrigger className="transition-shadow duration-300 hover:shadow-md">
+          {trigger}
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
