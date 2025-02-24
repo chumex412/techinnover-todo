@@ -1,5 +1,5 @@
 import { SVGProps } from 'react'
-const FourBoxes = (props: SVGProps<SVGSVGElement>) => (
+const FourBoxes = ({ fill, ...props }: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -8,7 +8,7 @@ const FourBoxes = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#4F35F3"
+      stroke={fill || '#6E7C87'}
       strokeMiterlimit={10}
       strokeWidth={2.25}
       d="M15.75 6H6v9.75h9.75V6Zm15 0H21v9.75h9.75V6Zm-15 15H6v9.75h9.75V21Zm15 0H21v9.75h9.75V21Z"

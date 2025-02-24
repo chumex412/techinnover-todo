@@ -35,3 +35,20 @@ export const getTimeFormat = (
     hour12: is12HourType,
   })
 }
+
+export const getUpdatedTime = (date: Date, time: Date) => {
+  const hourMins = getTimeFormat(
+    date && date.getDate() === new Date().getDate()
+      ? date.setHours(new Date().getHours())
+      : new Date(),
+    'en-GB',
+    false
+  ).split(':')
+
+  const updtdStartTime =
+    date.getDate() > new Date().getDate()
+      ? time.setHours(0, 0)
+      : time.setHours(Number(hourMins[0]), Number(hourMins[1]))
+
+  return updtdStartTime
+}

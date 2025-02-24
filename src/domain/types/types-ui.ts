@@ -2,7 +2,9 @@ export interface TaskContentProps<T> {
   title: string
   list: T[]
   status: TaskStatus
+  activeOnSD: boolean
   onEdit?: (id: string, status: TaskStatus) => void
+  onDelete?: (id: string) => void
 }
 
 export interface ModalProps<T> {
@@ -10,7 +12,7 @@ export interface ModalProps<T> {
   trigger?: T
   children: T
   isOpen?: boolean
-  onOpen?: VoidFunction
+  onOpen?: (value: boolean) => void
 }
 
 export interface InputProps<S, T, U> {
@@ -41,5 +43,23 @@ export interface TaskFormProps {
   btnLabel: string
   endpoint: string
   status?: TaskStatus
-  onSubmitData?: (data: Task) => void
+  onClose?: VoidFunction
+}
+
+export interface FileAdditionProps {
+  name: string
+  onPreviewImg: (img: ImgData) => void
+}
+
+export interface ImgData {
+  id?: string
+  name?: string
+  url?: string
+  size?: string
+}
+
+export interface PreviewProps extends ImgData {
+  defaultUrl?: string
+  progress: number
+  onDelete: (id: string) => void
 }

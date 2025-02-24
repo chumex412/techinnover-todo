@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+
 import { getFormatedDate, getTimeFormat } from '@/utils/format'
 import { taskPriority } from '@/utils/constants'
 
@@ -14,19 +15,23 @@ import Flag from '../icons/Flag'
 import dotIcon from '../../../public/icons/dots.svg'
 
 interface TaskProps extends Task {
-  onEdit: VoidFunction
+  onEdit: (id: string, status: TaskStatus) => void
+  onDelete: (id: string) => void
 }
 
 const TaskCard = ({
+  id,
+  status,
   title,
   description,
   image,
   priority,
   timestamp,
   onEdit,
+  onDelete,
 }: TaskProps) => {
   return (
-    <article className="p-4">
+    <article className="rounded-md bg-white p-4 shadow-sm">
       <p className="font-inter text-xs font-medium leading-[150%] xl:leading-6">
         <span
           className="rounded p-2 uppercase"
@@ -48,12 +53,12 @@ const TaskCard = ({
               <Image src={dotIcon} alt="Three dots icon" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={onEdit}>
+              <DropdownMenuItem onClick={() => onEdit(id || '', status)}>
                 <span className="font-inter text-xs font-normal text-gray-700">
                   Edit
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDelete(id || '')}>
                 <span className="font-inter text-xs font-normal text-red-400">
                   Delete
                 </span>
@@ -61,9 +66,11 @@ const TaskCard = ({
             </DropdownMenuContent>
           </DropdownMenu>
         </section>
-        {image && (
+        {image && image.includes('https') && (
           <Image
             src={image}
+            width={304}
+            height={125}
             className="h-[125px] w-full rounded object-cover"
             alt={`Image of ${title} task`}
           />

@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
-import { Day, nextDay, previousDay } from 'date-fns'
+import { type Day, nextDay, previousDay } from 'date-fns'
 
 import { getFormatedDate } from '@/utils/format'
 import { searchTask, trackTaskDate } from '@/redux/slice/actions'
@@ -43,8 +43,8 @@ export const Header = () => {
   }
 
   return (
-    <header className="container flex items-center justify-between py-8">
-      <section className="flex flex-wrap items-center gap-4">
+    <header className="xs:flex-row xs:items-center container flex flex-col justify-between gap-x-2 gap-y-6 py-8">
+      <section className="xs:order-1 order-2 flex flex-wrap items-center gap-4">
         <p className="font-sf-pro-text text-xl font-semibold leading-[120%] text-black">
           {getFormatedDate(filterDate)}
         </p>
@@ -63,8 +63,8 @@ export const Header = () => {
           </button>
         </div>
       </section>
-      <section>
-        <div className="flex max-w-[236px] items-center gap-x-2 rounded-[6px] border border-gray-50 bg-white p-2 shadow-sm">
+      <section className="xs:order-2 order-1">
+        <div className="xs:w-auto xs:max-w-[236px] flex w-full items-center gap-x-2 rounded-[6px] border border-gray-50 bg-white p-2 shadow-sm">
           <Image src={searchIcon} alt="Search icon" />
           <input
             type="text"

@@ -6,11 +6,15 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Image from 'next/image'
 
 import { taskPriority } from '@/utils/constants'
-import { PriorityOptions, TaskFormProps } from '@/domain/types/types-ui'
+import {
+  type PriorityOptions,
+  type TaskFormProps,
+} from '@/domain/types/types-ui'
 import { taskFormSchema, TaskFormType } from '@/domain/model/ui'
+import useFileUpload from '@/hooks/useFileUpload'
+import { useAddTaskMutation, useUpdateTaskMutation } from '@/redux/slice/task'
 
-import calendarIcon from '../../../public/icons/calendar.svg'
-import timerIcon from '../../../public/icons/timer.svg'
+import PreviewZone from './PreviewZone'
 
 import {
   Select,
@@ -18,10 +22,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './select'
+} from './SelectC'
 import Input from './Input'
 import DateTime from './DateTime'
-import { useAddTaskMutation, useUpdateTaskMutation } from '@/redux/slice/task'
+import uploadIcon from '../../../public/icons/upload.svg'
+import calendarIcon from '../../../public/icons/calendar.svg'
+import timerIcon from '../../../public/icons/timer.svg'
+import { getUpdatedTime } from '@/utils/format'
+import { SpinnerLoader } from './Loaders'
+import { notify } from '@/lib/notification'
 
 const priorities: PriorityOptions[] = [
   { label: 'High', value: 'high' },
@@ -40,7 +49,7 @@ const PrioritySelect = ({
 
   return (
     <section>
-      <label className="mb-[6px] text-sm font-medium text-gray-700">
+      <label className="mb-[6px] inline-block text-sm font-medium text-gray-700">
         {label}
       </label>
       <Select defaultValue={value}>
@@ -86,9 +95,8 @@ const TaskForm = ({
   btnLabel,
   status,
   endpoint,
-  // onSubmitData,
+  onClose,
 }: TaskFormProps) => {
-  const [image, setImage] = useState('')
   const [priority, setPriority] = useState<TaskPriority>(
     defaultData?.priority || 'low'
   )
@@ -98,6 +106,7 @@ const TaskForm = ({
   const [time, setTime] = useState<Date | undefined>(
     defaultData?.timestamp ? new Date(defaultData.timestamp) : undefined
   )
+
   const {
     handleSubmit,
     register,
@@ -110,8 +119,10 @@ const TaskForm = ({
     },
   })
 
-  const [addTask] = useAddTaskMutation()
-  const [updateTask] = useUpdateTaskMutation()
+  const { image, progress, getInputProps, getRootProps, deleteUploadedImg } =
+    useFileUpload()
+  const [addTask, { isLoading: addingTask }] = useAddTaskMutation()
+  const [updateTask, { isLoading: updatingTask }] = useUpdateTaskMutation()
 
   const handlePrioritySelect = (value: TaskPriority) => {
     setPriority(value)
@@ -129,20 +140,59 @@ const TaskForm = ({
     const taskData: Task = {
       title: data.taskName,
       description: data.taskDesc,
-      image,
+      image: image?.url || defaultData?.image || '',
       priority: priority,
       status: defaultData?.status || status || 'pending',
+      timestamp: time,
     }
+
+    if (!date && !time) {
+      notify('Please enter a valid date and time', 'error')
+    }
+
+    let error = ''
 
     if (endpoint.includes('edit') && defaultData?.id) {
       updateTask({ task: taskData, id: defaultData?.id })
+        .unwrap()
+        .then((response) => {
+          if (response) {
+            onClose?.()
+          }
+        })
+        .catch(() => {
+          error = 'Failed to update task'
+        })
+        .finally(() => {
+          notify(
+            error ? error : 'Successfully updated the selected tasks',
+            error ? 'error' : 'success'
+          )
+        })
     } else {
       addTask(taskData)
+        .unwrap()
+        .then((response) => {
+          if (response) {
+            onClose?.()
+          }
+        })
+        .catch(() => {
+          error = 'Failed to add task'
+        })
+        .finally(() => {
+          notify(
+            error ? error : 'Successfully added a task',
+            error ? 'error' : 'success'
+          )
+        })
     }
   }
 
+  const loading = addingTask || updatingTask
+
   return (
-    <form className="flex flex-col gap-y-5">
+    <form className="flex flex-col gap-y-5" onSubmit={handleSubmit(onSubmit)}>
       <Input
         label="Task Name"
         name="taskName"
@@ -164,13 +214,43 @@ const TaskForm = ({
         errors={errors}
       />
       <PrioritySelect label="Priority" onSelect={handlePrioritySelect} />
-      <section className="flex items-center gap-x-4">
+      <section>
+        <label
+          htmlFor="taskImg"
+          className="mb-[6px] inline-block text-sm font-medium text-gray-700"
+        >
+          <span>Upload cover</span>{' '}
+          <span className="text-gray-300">(Optional)</span>
+        </label>
+        <section className="">
+          {progress || image || defaultData?.image ? (
+            <PreviewZone
+              {...image}
+              defaultUrl={defaultData?.image}
+              progress={progress}
+              onDelete={deleteUploadedImg}
+            />
+          ) : (
+            <section className="drop-container flex h-32 max-w-80 cursor-pointer items-center justify-center rounded-lg border border-gray-200 p-4">
+              <div {...getRootProps({ className: 'dropzone' })}>
+                <Image src={uploadIcon} className="mx-auto" alt="Upload Icon" />
+                <input {...getInputProps()} />
+                <p className="font-inter text-sm font-normal leading-[150%] text-gray-400">
+                  <span className="text-primary-500">Click to upload</span> or
+                  drag and drop
+                </p>
+              </div>
+            </section>
+          )}
+        </section>
+      </section>
+      <section className="relative flex items-center gap-x-4">
         <DateTime
           type="date"
           label="Deadline"
           placeholderText="Due date"
           minDate={new Date()}
-          value={date?.toString()}
+          selected={date}
           onChange={handleDate}
           icon={<Image src={calendarIcon} alt="Calendar icon" />}
         />{' '}
@@ -178,19 +258,21 @@ const TaskForm = ({
           type="time"
           label="Time"
           placeholderText="Due time"
-          minTime={new Date()}
-          maxTime={new Date(new Date().setHours(23, 45))}
-          value={time?.toString()}
+          minTime={
+            new Date(getUpdatedTime(date || new Date(), time || new Date()))
+          }
+          maxTime={new Date(new Date(date || new Date()).setHours(23, 45))}
+          selected={time}
           onChange={handleTime}
           icon={<Image src={timerIcon} alt="Timer icon" />}
         />
       </section>
       <button
         type="submit"
-        className="w-full rounded-xl bg-primary-500 py-3 text-center font-inter text-base font-medium text-white"
-        onClick={handleSubmit(onSubmit)}
+        className="mb-2.5 mt-6 w-full rounded-xl bg-primary-500 py-2.5 text-center font-inter text-base font-medium text-white"
+        disabled={loading}
       >
-        {btnLabel}
+        {loading ? <SpinnerLoader /> : btnLabel}
       </button>
     </form>
   )

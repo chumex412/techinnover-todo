@@ -1,5 +1,5 @@
 import { SVGProps } from 'react'
-const BriefCase = (props: SVGProps<SVGSVGElement>) => (
+const BriefCase = ({ fill, ...props }: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -8,13 +8,13 @@ const BriefCase = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#65676D"
+      stroke={fill || '#6E7C87'}
       strokeMiterlimit={10}
       strokeWidth={2.25}
       d="M31.5 11.2H3.75V30H31.5V11.2Z"
     />
     <path
-      stroke="#65676D"
+      stroke={fill || '#6E7C87'}
       strokeMiterlimit={10}
       strokeWidth={2.25}
       d="M23.73 17.6H11.52v6.01h12.21v-6.02Zm-12.1-6.4V5.25h12v5.96"

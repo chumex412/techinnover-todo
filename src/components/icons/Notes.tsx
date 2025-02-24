@@ -1,5 +1,5 @@
 import { SVGProps } from 'react'
-const Notes = (props: SVGProps<SVGSVGElement>) => (
+const Notes = ({ fill, ...props }: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -8,7 +8,7 @@ const Notes = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#65676D"
+      stroke={fill || '#6E7C87'}
       strokeMiterlimit={10}
       strokeWidth={2.25}
       d="M6 10.5h24M6 18h24M6 25.5h24"

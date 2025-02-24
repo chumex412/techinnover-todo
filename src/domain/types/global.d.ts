@@ -14,4 +14,11 @@ declare global {
     priority: TaskPriority
     timestamp?: Timestamp
   }
+
+  interface NetworkResponse<T> {
+    data?: T
+    success?: boolean
+    error?: string
+    message?: string
+  }
 }

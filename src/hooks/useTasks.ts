@@ -1,10 +1,13 @@
-import { useGetTasksQuery } from '@/redux/slice/task'
 import { useEffect, useState } from 'react'
+
+import { useGetTasksQuery, useRemoveTaskMutation } from '@/redux/slice/task'
+
 import { useAppSelector } from './redux'
 
 export default function useTask() {
-  const { data, isLoading } = useGetTasksQuery('')
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
+  const { data, isLoading } = useGetTasksQuery('')
+  const [removeTask] = useRemoveTaskMutation()
 
   const filterActions = useAppSelector((state) => state.actions)
 
@@ -29,8 +32,12 @@ export default function useTask() {
     if (filterActions.search && data) {
       filtered = data.filter(
         (task) =>
-          task.title.includes(filterActions.search) ||
-          task.description?.includes(filterActions.search)
+          task.title
+            .toLowerCase()
+            .includes(filterActions.search.toLowerCase()) ||
+          task.description
+            ?.toLowerCase()
+            ?.includes(filterActions.search.toLowerCase())
       )
     }
 
@@ -57,6 +64,10 @@ export default function useTask() {
     setFilteredTasks(filtered)
   }
 
+  const handleTaskDelete = (id: string) => {
+    removeTask(id)
+  }
+
   const pending = filteredTasks?.filter((task) => task.status === 'pending')
   const progress = filteredTasks?.filter((task) => task.status === 'progress')
   const completed = filteredTasks?.filter((task) => task.status === 'completed')
@@ -65,5 +76,6 @@ export default function useTask() {
     tasks: { pending, progress, completed },
     isLoading,
     handleFilter,
+    handleTaskDelete,
   }
 }

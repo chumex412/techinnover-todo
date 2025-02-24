@@ -1,0 +1,69 @@
+@tailwind components;
+
+@layer components {
+  .react-datepicker__input-container 
+  img.react-datepicker__calendar-icon.tt-date-picker-icon {
+    right: 0.875rem;
+    top: 50%;
+    padding: 0;
+    transform: translateY(-50%);
+  }
+
+  .react-datepicker__view-calendar-icon input.tt-date-picker {
+    padding: 0.75rem 1.875rem 0.75rem 1rem;
+  }
+
+  .dialogOverlay {
+    background: rgba(38, 50, 56, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    overflow-y: auto;
+    backdrop-filter: blur(4px);
+    padding: 1rem;
+  }
+
+  .dialogContent {
+    left: unset;
+    top: unset;
+  }
+
+  .spinner_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .spinner {
+    width: 1em;
+    height: 1em;
+    background-color: transparent;
+    border: 2px solid rgba(17, 20, 45, 0.4);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s linear infinite;
+    -moz-animation: spin 1s linear infinite;
+    -webkit-animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -webkit-transform: rotate(360deg);
+    }
+  }
+  
+  @-webkit-keyframes spin {
+    to {
+      transform: rotate(360deg);
+      --moz-transform: rotate(360deg);
+      --webkit-transform: rotate(360deg);
+    }
+  }
+  
+}
