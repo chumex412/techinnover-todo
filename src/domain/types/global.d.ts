@@ -10,7 +10,12 @@ declare global {
     title: string
     description?: string
     status: TaskStatus
-    image?: string
+    image?: {
+      id?: string
+      name?: string
+      url?: string
+      size?: string
+    }
     priority: TaskPriority
     timestamp?: Timestamp
   }

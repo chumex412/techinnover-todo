@@ -22,6 +22,7 @@ const Input = ({
   multiline,
   className,
   placeholder,
+  rows = 4,
   error,
   errors,
   validate,
@@ -32,7 +33,7 @@ const Input = ({
       type="text"
       placeholder={placeholder}
       className={clsx(
-        'w-full rounded-xl border border-gray-100 px-3.5 py-2.5 text-base leading-[150%] text-gray-500 placeholder:text-gray-300',
+        'w-full rounded-xl border border-gray-100 px-2 py-2.5 text-base leading-[150%] text-gray-500 placeholder:text-gray-300 sm:px-3.5',
         className
       )}
       name={name}
@@ -45,9 +46,10 @@ const Input = ({
     inputField = (
       <textarea
         className={clsx(
-          'w-full resize-none rounded-xl border border-gray-100 px-3.5 py-2.5 text-base leading-[150%] text-gray-500 placeholder:text-gray-300',
+          'w-full resize-none rounded-xl border border-gray-100 px-2 py-2.5 text-base leading-[150%] text-gray-500 placeholder:text-gray-300 sm:px-3.5',
           className
         )}
+        rows={rows}
         {...validate}
         {...props}
       />

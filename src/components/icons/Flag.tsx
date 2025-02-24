@@ -14,7 +14,7 @@ const Flag = ({ fill, ...props }: SVGProps<SVGSVGElement>) => (
       fillRule="evenodd"
       d="M5 8a3 3 0 0 1 3-3h10a1 1 0 0 1 .8 1.6L16.25 10l2.55 3.4A1 1 0 0 1 18 15H8a1 1 0 0 0-1 1v3a1 1 0 1 1-2 0V8Z"
       clipRule="evenodd"
-      opacity={0.5}
+      opacity={1}
     />
   </svg>
 )

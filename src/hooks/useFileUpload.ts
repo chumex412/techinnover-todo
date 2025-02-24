@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import axios from 'axios'
 
@@ -7,6 +7,7 @@ import {
   type CloudinarySigned,
 } from '@/domain/types/services'
 import { ImgData } from '@/domain/types/types-ui'
+import { notify } from '@/lib/notification'
 
 export default function useFileUpload() {
   const [image, setImage] = useState<ImgData>()
@@ -20,8 +21,8 @@ export default function useFileUpload() {
     onDrop: async (acceptedFiles) => {
       const response = await uploadFile(acceptedFiles[0])
       if (response) {
-        const marker = 1024 * 1000
-        let bytes = (response.bytes || 1 / marker).toFixed(1) + ' KB'
+        const marker = 1024
+        let bytes = ((response.bytes || 1) / marker).toFixed(1) + ' KB'
 
         if (response.bytes && +response.bytes >= marker * marker) {
           bytes = (response.bytes / 1048576).toFixed(1) + ' MB'
@@ -73,19 +74,36 @@ export default function useFileUpload() {
     }
   }
 
-  const deleteUploadedImg = async (id: string) => {
-    try {
-      await axios.delete<NetworkResponse<null>>(`/api/cloudinary/${id}`)
+  const updateImg = useCallback((img: ImgData) => {
+    setImage(img)
+  }, [])
 
-      setImage(undefined)
+  const deleteUploadedImg = async (id: string) => {
+    let error = ''
+    try {
+      const response = await axios.delete<NetworkResponse<null>>(
+        `/api/cloudinary/${id}`
+      )
+
+      if (response.data.success) {
+        setImage(undefined)
+        setProgress(0)
+      }
     } catch (err) {
       console.error(err)
+      error = 'Failed to delete image resource due to some error'
+    } finally {
+      notify(
+        error ? error : 'Successfully deleted image',
+        error ? 'error' : 'success'
+      )
     }
   }
 
   return {
     progress,
     image,
+    updateImg,
     getRootProps,
     getInputProps,
     acceptedFiles,

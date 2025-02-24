@@ -10,6 +10,7 @@ import TaskCard from './TaskCard'
 import plusIcon from '../../../public/icons/plus.svg'
 import TaskForm from './TaskForm'
 import Modal from './Dialog'
+import { Droppable } from '@/lib/drag-n-drop/Droppable'
 
 const TaskContent = ({
   title,
@@ -23,26 +24,12 @@ const TaskContent = ({
 
   const closeModal = useCallback(() => setIsOpen(false), [])
 
-  const editHandler = useCallback(
-    (id: string, status: TaskStatus) => {
-      onEdit?.(id || '', status)
-    },
-    [onEdit]
-  )
-
-  const deleteHandler = useCallback(
-    (id: string) => {
-      onDelete?.(id)
-    },
-    [onDelete]
-  )
-
   return (
-    <>
+    <Droppable id={status}>
       <section
         className={clsx(
-          'visible absolute left-0 top-0 flex w-full flex-1 flex-col gap-y-4 rounded-lg bg-off-white px-2 py-4 opacity-100 xs:static xs:w-auto',
-          !activeOnSD && 'invisible opacity-0 xs:visible xs:opacity-100'
+          'visible flex w-full flex-1 flex-col gap-y-4 rounded-lg bg-off-white px-2 py-4 opacity-100 xs:w-auto',
+          !activeOnSD && 'hidden xs:flex xs:opacity-100'
         )}
       >
         <section className="flex items-center justify-between">
@@ -68,20 +55,21 @@ const TaskContent = ({
             />
           </Modal>
         </section>
+
         <section className="flex flex-col gap-y-4">
           {list.map((item, idx) => {
             return (
               <TaskCard
                 key={item.id || idx + 1}
                 {...item}
-                onEdit={editHandler}
-                onDelete={deleteHandler}
+                onEdit={onEdit}
+                onDelete={onDelete}
               />
             )
           })}
         </section>
       </section>
-    </>
+    </Droppable>
   )
 }
 

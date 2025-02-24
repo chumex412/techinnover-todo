@@ -37,7 +37,7 @@ const DateTime = memo(function DateTime({
         {label}
       </label>
       <DatePicker
-        className="tt-date-picker relative z-50 w-full cursor-pointer rounded-xl border border-gray-100 bg-transparent px-3.5 py-3 text-base leading-[150%] text-gray-500 placeholder:text-gray-300"
+        className="tt-date-picker relative z-50 w-full cursor-pointer rounded-xl border border-gray-100 bg-transparent px-2 py-3 text-base leading-[150%] text-gray-500 placeholder:text-gray-300 sm:px-3.5"
         calendarIconClassName="tt-date-picker-icon"
         showIcon
         {...dateProps}

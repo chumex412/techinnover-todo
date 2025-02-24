@@ -10,7 +10,7 @@
   }
 
   .react-datepicker__view-calendar-icon input.tt-date-picker {
-    padding: 0.75rem 1.875rem 0.75rem 1rem;
+    padding: 0.75rem 1.5rem 0.75rem 0.5rem;
   }
 
   .dialogOverlay {
@@ -63,6 +63,12 @@
       transform: rotate(360deg);
       --moz-transform: rotate(360deg);
       --webkit-transform: rotate(360deg);
+    }
+  }
+
+  @media only screen and (min-width: theme("screens.sm")) {
+    .react-datepicker__view-calendar-icon input.tt-date-picker {
+      padding: 0.75rem 1.875rem 0.75rem 1rem;
     }
   }
   

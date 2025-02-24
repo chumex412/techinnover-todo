@@ -1,9 +1,13 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { ListTodo } from 'lucide-react'
+import { DndContext, DragEndEvent } from '@dnd-kit/core'
 
 import useTask from '@/hooks/useTasks'
+import { type TaskStatusContents } from '@/domain/types/types-ui'
+import { notify } from '@/lib/notification'
+import { useRemoveTaskMutation } from '@/redux/slice/task'
 
 import Modal from './Dialog'
 import TaskForm from './TaskForm'
@@ -17,21 +21,91 @@ import {
 
 const taskStat: TaskStatus[] = ['pending', 'progress', 'completed']
 
+const getTaskItem = (tasks: Task[], id: string) => {
+  const taskItem = tasks?.find((item) => item.id === id)
+
+  return taskItem
+}
+
 const Content = () => {
   const [statusAction, setStatusAction] = useState<TaskStatus>('pending')
   const [selectedTask, setSelectedTask] = useState<Task>()
-  const { tasks, handleTaskDelete } = useTask()
 
-  const editTask = (id: string, status: TaskStatus) => {
-    const statusTasks = tasks[status]
+  const [removeTask] = useRemoveTaskMutation()
 
-    if (tasks) {
-      const taskItem = statusTasks.find((item) => item.id === id)
+  const { originalTasks, filteredTasks, updateTask, updateFilteredTasks } =
+    useTask()
+
+  const pending = filteredTasks?.filter((task) => task.status === 'pending')
+  const progress = filteredTasks?.filter((task) => task.status === 'progress')
+  const completed = filteredTasks?.filter((task) => task.status === 'completed')
+
+  const tasks: TaskStatusContents[] = useMemo(
+    () => [
+      { id: 'pending', items: pending },
+      { id: 'progress', items: progress },
+      { id: 'completed', items: completed },
+    ],
+    [pending, progress, completed]
+  )
+
+  const editTask = useCallback(
+    (id: string, status: TaskStatus) => {
+      const statusTasks = tasks.find((item) => item.id === status)
+      if (statusTasks) {
+        const taskItem = getTaskItem(statusTasks.items, id)
+
+        if (taskItem) {
+          setSelectedTask(taskItem)
+        }
+      }
+    },
+    [tasks]
+  )
+
+  const handleTaskDelete = useCallback(
+    (id: string) => {
+      let error = ''
+
+      removeTask(id)
+        .unwrap()
+        .catch(() => {
+          error =
+            'Failed to delete the selected due to an error, please try again'
+        })
+        .finally(() => {
+          notify(
+            error ? error : 'Deleted successfully',
+            error ? 'error' : 'success'
+          )
+        })
+    },
+    [removeTask]
+  )
+
+  const moveTask = (id: string, status: TaskStatus) => {
+    if (originalTasks) {
+      const taskItem = getTaskItem(originalTasks, id)
 
       if (taskItem) {
-        setSelectedTask(taskItem)
+        updateFilteredTasks(
+          filteredTasks.map((item) => {
+            if (item.id === id) {
+              return { ...item, status }
+            }
+
+            return item
+          })
+        )
+        updateTask({ id, task: { ...taskItem, status } })
       }
     }
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    const status = over?.id as TaskStatus
+    moveTask(active.id as string, status)
   }
 
   const closeModal = useCallback(() => setSelectedTask(undefined), [])
@@ -61,32 +135,27 @@ const Content = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </section>
-      <section className="relative flex items-start gap-4 bg-white">
-        <TaskContent
-          title="To do"
-          list={tasks.pending}
-          status="pending"
-          onEdit={editTask}
-          activeOnSD={statusAction === 'pending'}
-          onDelete={handleTaskDelete}
-        />
-        <TaskContent
-          title="In progress"
-          list={tasks.progress}
-          status="progress"
-          onEdit={editTask}
-          activeOnSD={statusAction === 'progress'}
-          onDelete={handleTaskDelete}
-        />
-        <TaskContent
-          title="Completed"
-          list={tasks.completed}
-          status="completed"
-          onEdit={editTask}
-          activeOnSD={statusAction === 'completed'}
-          onDelete={handleTaskDelete}
-        />
-      </section>
+      <DndContext onDragEnd={handleDragEnd}>
+        <section className="relative flex w-full flex-col items-start gap-4 bg-white xs:flex-row">
+          {tasks.map((item) => (
+            <TaskContent
+              key={item.id}
+              title={
+                item.id === 'pending'
+                  ? 'To do'
+                  : item.id === 'progress'
+                    ? 'In progress'
+                    : 'Completed'
+              }
+              list={item.items}
+              status={item.id}
+              onEdit={editTask}
+              activeOnSD={statusAction === item.id}
+              onDelete={handleTaskDelete}
+            />
+          ))}
+        </section>
+      </DndContext>
       <Modal
         title="Edit Task"
         isOpen={!!selectedTask}

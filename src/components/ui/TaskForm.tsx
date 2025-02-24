@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { KeyboardEvent, useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Image from 'next/image'
@@ -13,9 +13,10 @@ import {
 import { taskFormSchema, TaskFormType } from '@/domain/model/ui'
 import useFileUpload from '@/hooks/useFileUpload'
 import { useAddTaskMutation, useUpdateTaskMutation } from '@/redux/slice/task'
+import { notify } from '@/lib/notification'
+import { getUpdatedTime } from '@/utils/handlers'
 
 import PreviewZone from './PreviewZone'
-
 import {
   Select,
   SelectContent,
@@ -28,9 +29,7 @@ import DateTime from './DateTime'
 import uploadIcon from '../../../public/icons/upload.svg'
 import calendarIcon from '../../../public/icons/calendar.svg'
 import timerIcon from '../../../public/icons/timer.svg'
-import { getUpdatedTime } from '@/utils/format'
 import { SpinnerLoader } from './Loaders'
-import { notify } from '@/lib/notification'
 
 const priorities: PriorityOptions[] = [
   { label: 'High', value: 'high' },
@@ -38,22 +37,31 @@ const priorities: PriorityOptions[] = [
   { label: 'Low', value: 'low' },
 ]
 
+export const preventDatepickerManualInput = (e: KeyboardEvent) => {
+  e.preventDefault()
+}
+
 const PrioritySelect = ({
   label,
   onSelect,
+  value,
 }: {
   label: string
+  value: TaskPriority
   onSelect: (value: TaskPriority) => void
 }) => {
-  const [value, setValue] = useState<TaskPriority>('low')
-
   return (
     <section>
       <label className="mb-[6px] inline-block text-sm font-medium text-gray-700">
         {label}
       </label>
-      <Select defaultValue={value}>
-        <SelectTrigger className="w-full rounded-xl px-3.5 py-3 text-base leading-[150%] text-gray-300">
+      <Select
+        defaultValue={value}
+        onValueChange={(value: TaskPriority) => {
+          onSelect(value)
+        }}
+      >
+        <SelectTrigger className="w-full rounded-xl px-2 py-3 text-base leading-[150%] text-gray-300 sm:px-3.5">
           <SelectValue
             style={{
               backgroundColor: taskPriority[value].background,
@@ -69,14 +77,11 @@ const PrioritySelect = ({
             return (
               <SelectItem
                 key={priority.label}
+                // onPointerDown={(e) => e.stopPropagation()}
                 className="text-xs font-medium"
                 style={{
                   backgroundColor: option.background,
                   color: option.color,
-                }}
-                onClick={() => {
-                  setValue(priority.value)
-                  onSelect(priority.value)
                 }}
                 value={priority.value}
               >
@@ -103,9 +108,6 @@ const TaskForm = ({
   const [date, setDate] = useState<Date | undefined>(
     defaultData?.timestamp ? new Date(defaultData.timestamp) : undefined
   )
-  const [time, setTime] = useState<Date | undefined>(
-    defaultData?.timestamp ? new Date(defaultData.timestamp) : undefined
-  )
 
   const {
     handleSubmit,
@@ -119,35 +121,45 @@ const TaskForm = ({
     },
   })
 
-  const { image, progress, getInputProps, getRootProps, deleteUploadedImg } =
-    useFileUpload()
+  const {
+    image,
+    progress,
+    updateImg,
+    getInputProps,
+    getRootProps,
+    deleteUploadedImg,
+  } = useFileUpload()
   const [addTask, { isLoading: addingTask }] = useAddTaskMutation()
   const [updateTask, { isLoading: updatingTask }] = useUpdateTaskMutation()
 
+  useEffect(() => {
+    if (defaultData?.image && defaultData.image.url?.includes('https')) {
+      updateImg({ ...defaultData.image })
+    }
+  }, [defaultData?.image, updateImg])
+
   const handlePrioritySelect = (value: TaskPriority) => {
     setPriority(value)
-  }
-
-  const handleDate = (selectedDate: Date | null) => {
-    if (selectedDate) setDate(selectedDate)
-  }
-
-  const handleTime = (time: Date | null) => {
-    if (time) setTime(time)
   }
 
   const onSubmit: SubmitHandler<TaskFormType> = (data) => {
     const taskData: Task = {
       title: data.taskName,
       description: data.taskDesc,
-      image: image?.url || defaultData?.image || '',
+      image:
+        image ||
+        (defaultData?.image?.url?.includes('https') ? defaultData?.image : {}),
       priority: priority,
       status: defaultData?.status || status || 'pending',
-      timestamp: time,
+      timestamp: date?.toString(),
     }
 
-    if (!date && !time) {
+    if (!date) {
+      notify('Date should not be empty', 'error')
+      return
+    } else if (date.getTime() < new Date().getTime()) {
       notify('Please enter a valid date and time', 'error')
+      return
     }
 
     let error = ''
@@ -213,7 +225,11 @@ const TaskForm = ({
         validate={{ ...register('taskDesc') }}
         errors={errors}
       />
-      <PrioritySelect label="Priority" onSelect={handlePrioritySelect} />
+      <PrioritySelect
+        label="Priority"
+        value={priority}
+        onSelect={handlePrioritySelect}
+      />
       <section>
         <label
           htmlFor="taskImg"
@@ -223,10 +239,12 @@ const TaskForm = ({
           <span className="text-gray-300">(Optional)</span>
         </label>
         <section className="">
-          {progress || image || defaultData?.image ? (
+          {progress || (image?.url && image?.url?.includes('https')) ? (
             <PreviewZone
-              {...image}
-              defaultUrl={defaultData?.image}
+              id={image?.id}
+              size={image?.size}
+              name={image?.name}
+              url={image?.url}
               progress={progress}
               onDelete={deleteUploadedImg}
             />
@@ -251,19 +269,27 @@ const TaskForm = ({
           placeholderText="Due date"
           minDate={new Date()}
           selected={date}
-          onChange={handleDate}
+          onChange={(selectedDate) => {
+            if (selectedDate) {
+              setDate(selectedDate)
+            }
+          }}
+          onKeyDown={preventDatepickerManualInput}
           icon={<Image src={calendarIcon} alt="Calendar icon" />}
         />{' '}
         <DateTime
           type="time"
           label="Time"
           placeholderText="Due time"
-          minTime={
-            new Date(getUpdatedTime(date || new Date(), time || new Date()))
-          }
+          minTime={new Date(getUpdatedTime(date || new Date()))}
           maxTime={new Date(new Date(date || new Date()).setHours(23, 45))}
-          selected={time}
-          onChange={handleTime}
+          selected={date}
+          onChange={(time) => {
+            if (time) {
+              setDate(time)
+            }
+          }}
+          onKeyDown={preventDatepickerManualInput}
           icon={<Image src={timerIcon} alt="Timer icon" />}
         />
       </section>

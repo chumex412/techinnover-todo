@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { useGetTasksQuery, useRemoveTaskMutation } from '@/redux/slice/task'
+import { useGetTasksQuery, useUpdateTaskMutation } from '@/redux/slice/task'
 
 import { useAppSelector } from './redux'
 
 export default function useTask() {
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
   const { data, isLoading } = useGetTasksQuery('')
-  const [removeTask] = useRemoveTaskMutation()
+  const [updateTask] = useUpdateTaskMutation()
 
   const filterActions = useAppSelector((state) => state.actions)
 
@@ -44,38 +44,49 @@ export default function useTask() {
     setFilteredTasks(filtered)
   }, [data, filterActions.date, filterActions.search])
 
-  const handleFilter = (type: 'date' | 'search', value: string) => {
-    let filtered: Task[] = []
+  const updateFilteredTasks = useCallback((newTasks: Task[]) => {
+    setFilteredTasks(newTasks)
+  }, [])
 
-    if (type === 'date' && data) {
-      filtered = data.filter((task) =>
-        task.timestamp
-          ? new Date(task.timestamp).toDateString() ===
-            new Date(value).toDateString()
-          : false
-      )
-    } else if (type === 'search' && data) {
-      filtered = data.filter(
-        (task) =>
-          task.title.includes(value) || task.description?.includes(value)
-      )
-    }
+  const handleFilter = useCallback(
+    (type: 'date' | 'search', value: string) => {
+      let filtered: Task[] = []
 
-    setFilteredTasks(filtered)
-  }
+      if (type === 'date' && data) {
+        filtered = data.filter((task) =>
+          task.timestamp
+            ? new Date(task.timestamp).toDateString() ===
+              new Date(value).toDateString()
+            : false
+        )
+      } else if (type === 'search' && data) {
+        filtered = data.filter(
+          (task) =>
+            task.title.includes(value) || task.description?.includes(value)
+        )
+      }
 
-  const handleTaskDelete = (id: string) => {
-    removeTask(id)
-  }
+      setFilteredTasks(filtered)
+    },
+    [data]
+  )
 
-  const pending = filteredTasks?.filter((task) => task.status === 'pending')
-  const progress = filteredTasks?.filter((task) => task.status === 'progress')
-  const completed = filteredTasks?.filter((task) => task.status === 'completed')
-
-  return {
-    tasks: { pending, progress, completed },
-    isLoading,
-    handleFilter,
-    handleTaskDelete,
-  }
+  return useMemo(
+    () => ({
+      originalTasks: data,
+      filteredTasks,
+      isLoading,
+      handleFilter,
+      updateTask,
+      updateFilteredTasks,
+    }),
+    [
+      data,
+      filteredTasks,
+      isLoading,
+      handleFilter,
+      updateTask,
+      updateFilteredTasks,
+    ]
+  )
 }

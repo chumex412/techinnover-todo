@@ -1,10 +1,15 @@
+export interface TaskStatusContents {
+  id: TaskStatus
+  items: Task[]
+}
+
 export interface TaskContentProps<T> {
   title: string
   list: T[]
   status: TaskStatus
   activeOnSD: boolean
-  onEdit?: (id: string, status: TaskStatus) => void
-  onDelete?: (id: string) => void
+  onEdit: (id: string, status: TaskStatus) => void
+  onDelete: (id: string) => void
 }
 
 export interface ModalProps<T> {
@@ -20,6 +25,7 @@ export interface InputProps<S, T, U> {
   multiline?: boolean
   className?: string
   placeholder?: string
+  rows?: number
   error?: string
   errors?: S
   validate?: T
@@ -59,7 +65,22 @@ export interface ImgData {
 }
 
 export interface PreviewProps extends ImgData {
-  defaultUrl?: string
   progress: number
   onDelete: (id: string) => void
+}
+
+export interface DragNDropProps<T> {
+  id: string
+  children: T
+}
+
+export type DropdownType<S, T> = {
+  format: 'table'
+  children: S
+  onSelect: T
+  show: boolean
+  displayOptions?: (val: boolean) => void
+  overlayTop: number
+  highlightedIndex: number | null
+  highlightOption: (optionIndex: number | null) => void
 }
