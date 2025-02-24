@@ -34,3 +34,51 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# Techinnover Frontend Assessment
+
+Basicially an assessment to test my frontend skills, experience and knowledge.
+
+## Table of contents
+
+- [Overview](#overview)
+  -[Getting started](#getting-started)
+  - [Links](#links)
+- [My process](#my-process)
+  - [Built with](#built-with)
+
+## Overview
+
+### Getting Started
+
+First, run this command:
+
+```bash
+pnpm install
+```
+After installing all dependencies, run this
+```bash
+npm run dev
+# or
+pnpm dev
+```
+
+### Links
+
+- Solution URL: [https://github.com/chumex412/techinnover-todo](https://github.com/chumex412/techinnover-todo)
+- Live Site URL: [space-tourism-fem-ca.vercel.app](space-tourism-fem-ca.vercel.app)
+
+## My process
+
+I began by building the UI to match the design specifications. Additionally, I designed the components to seamlessly integrate with the API and external state management, ensuring efficiency and maintainability.
+
+### Built with
+
+- Mobile-first workflow
+- [NextJS](https://nextjs.org/) - React framework
+- [TailwindCSS](https://tailwindcss.com/) - For styles
+- [TypeScript](https://www.typescriptlang.org/) - For type checking
+- [ShadCN](https://ui.shadcn.com/) - Utilized some already built, customizable and accessible components
+- [DND Kit](https://dndkit.com/) - For Drag and Drop
+- [Redux Toolkit](https://redux-toolkit.js.org/) - For state management
+
