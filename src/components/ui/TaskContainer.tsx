@@ -119,17 +119,17 @@ const Content = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             {taskStat.map((stat) => (
-              <DropdownMenuItem
-                key={stat}
-                onClick={() => setStatusAction(stat)}
-              >
-                <span className="font-inter text-xs font-normal capitalize text-gray-700">
+              <DropdownMenuItem key={stat} asChild>
+                <button
+                  onClick={() => setStatusAction(stat)}
+                  className="flex w-full font-inter text-xs font-normal capitalize text-gray-700"
+                >
                   {stat === 'pending'
                     ? 'To do'
                     : stat === 'progress'
                       ? 'In progress'
                       : 'Completed'}
-                </span>
+                </button>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
