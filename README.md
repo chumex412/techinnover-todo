@@ -47,11 +47,3 @@ I began by building the UI to match the design specifications. Additionally, I d
 - [Redux Toolkit](https://redux-toolkit.js.org/) - For state management
 
 ### Project Env Variables 
-
-NEXT_PUBLIC_BASE_URL=https://67b85f9b699a8a7baef3d33b.mockapi.io/api/v1
-NEXT_PUBLIC_UPLOAD_URL=https://api.cloudinary.com/v1_1/da8vqkdmt/image/upload
-NEXT_PUBLIC_CLOUD_NAME=da8vqkdmt
-NEXT_PUBLIC_UPLOAD_API_KEY=932782373686582
-NEXT_PUBLIC_UPLOAD_API_SECRET=OtqNaR7klLI9529aVRLj09Sepso
-
-NB: I'll remove these 4 -5 days from now, thank you.
